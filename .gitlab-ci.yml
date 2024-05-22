@@ -1,0 +1,103 @@
+stages:
+  - java-build
+  - docker-build
+  - kubernetes-diff
+  - kubernetes-apply
+
+java-build:
+  # select the most appropriate image for your project
+  image: harbor.solumesl.com/maven/maven:3.8-eclipse-temurin-17-alpine
+  stage: java-build
+  # Cache downloaded dependencies and plugins between builds.
+  # The key here separates one cache per branch/tag ($CI_COMMIT_REF_SLUG)
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  cache:
+    #key: "maven-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .m2/repository
+  script:
+    - mvn $MAVEN_CLI_OPTS clean install package -s ci_settings.xml
+  artifacts:
+    name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
+    paths:
+      - "**/target"
+  only:
+    refs:
+      - main
+      - master
+      - feature/cicd
+    changes:
+      # - ".gitlab-ci.yml"
+      - "pom.xml"
+      - "settings.xml"
+      - ".dockerbuild/*"
+      - ".dockerbuild/**/*"
+      - "src/*"
+      - "src/**/*"
+
+docker-build:
+  stage: docker-build
+  image: harbor.solumesl.com/docker/docker:20.10.17-git-r0
+  before_script:
+    - apk add --update --no-cache jq libxml2-utils curl py3-pip && pip install --upgrade yq pip
+  dependencies:
+    - java-build
+  script:
+    - .dockerbuild/build.sh
+  # when: manual
+  only:
+    refs:
+      - main
+      - master
+      - feature/cicd
+    changes:
+      # - ".gitlab-ci.yml"
+      - "pom.xml"
+      - "settings.xml"
+      - ".dockerbuild/*"
+      - ".dockerbuild/**/*"
+      - "src/*"
+      - "src/**/*"
+
+kubernetes-diff:
+  stage: kubernetes-diff
+  image: harbor.solumesl.com/alpine/k8s:1.22.9
+  script:
+    - .deploy/deploy.sh diff
+  when: manual
+  only:
+    refs:
+      - main
+      - master
+      - feature/cicd
+    changes:
+      - ".gitlab-ci.yml"
+      - "pom.xml"
+      - ".deploy/*"
+      - ".deploy/**/*"
+      - ".dockerbuild/*"
+      - ".dockerbuild/**/*"
+      - "src/*"
+      - "src/**/*"
+
+kubernetes-apply:
+  stage: kubernetes-apply
+  image: harbor.solumesl.com/alpine/k8s:1.22.9
+  script:
+    - .deploy/deploy.sh apply
+  when: manual
+  only:
+    refs:
+      - main
+      - master
+      - feature/cicd
+    changes:
+      - ".gitlab-ci.yml"
+      - "pom.xml"
+      - ".deploy/*"
+      - ".deploy/**/*"
+      - ".dockerbuild/*"
+      - ".dockerbuild/**/*"
+      - "src/*"
+      - "src/**/*"

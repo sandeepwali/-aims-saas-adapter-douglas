@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aims-client-douglas
+  annotations:
+    gitlab-date: 2022-05-27T12_57_09
+spec:
+  replicas: 1
+  selector: {}
+  template:
+    spec:
+      imagePullSecrets:
+        - name: aims-docker-registry-secret
+      containers:
+        - name: aims-client-douglas
+          image: aims-client-douglas-image
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            requests:
+              memory: "500M"
+              cpu: "100m"
+          livenessProbe:
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            failureThreshold: 5
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9090
+          readinessProbe:
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            failureThreshold: 5
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9090
+          env:
+            - name: TZ
+              value: Europe/Berlin
+            # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+          envFrom:
+            - configMapRef:
+                name: aims-client-douglas-env
+            - secretRef:
+                name: aims-client-douglas-env
+          volumeMounts:
+            - mountPath: /home/aims/input
+              name: upload-volume
+        - name: sftp-server
+          image: atmoz/sftp:alpine
+          imagePullPolicy: Always
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - "sleep 5; echo >>/etc/ssh/sshd_config; echo HostKeyAlgorithms ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519 >>/etc/ssh/sshd_config; kill -HUP 1"
+          resources:
+            limits:
+              memory: "250Mi"
+              cpu: "200m"
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
+          args:
+            - "aims:75363821-7750-4369-8ee8-24bfdc67d6c2:1010:0::/input"
+          volumeMounts:
+            - mountPath: /home/aims/input
+              name: upload-volume
+      volumes:
+        - name: upload-volume
+          emptyDir: {}

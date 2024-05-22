@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Artikelstamm>
+<Artikel>
+<Artikelnummer>10002</Artikelnummer>
+<Artikeltext>DEO ATO </Artikeltext>
+<Basisinhalt>1000.000</Basisinhalt>
+<Preisgegenueberstellung>0</Preisgegenueberstellung>
+<Warengruppe>1451</Warengruppe>
+<Lieferantenartikelnummer>L7149100</Lieferantenartikelnummer>
+<Lieferantenname>L&#39;ORÉAL DEUTSCHLAND GMBH</Lieferantenname>
+<Linientext>HOUSE 991</Linientext>
+<Depottext>HOUSE 99</Depottext>
+<Packungsinhalt>150  ML</Packungsinhalt>
+<Linie>5483001</Linie>
+<Depot>5483000</Depot>
+<UVP>21.41</UVP>
+<Eanliste Anzahl="1">
+<EAN>3614271728012</EAN>
+</Eanliste>
+<Loeschkennzeichen>NEW</Loeschkennzeichen>
+</Artikel>
+<Artikel>
+<Artikelnummer>10005</Artikelnummer>
+<Artikeltext>EYELINER a</Artikeltext>
+<Basisinhalt>-1000.000</Basisinhalt>
+<Preisgegenueberstellung>0</Preisgegenueberstellung>
+<Warengruppe>2213</Warengruppe>
+<Lieferantenartikelnummer>OF-44003</Lieferantenartikelnummer>
+<Lieferantenname>EVERDEA POLSKA SP. Z O.O.</Lieferantenname>
+<Linientext>MAKE UP</Linientext>
+<Depottext>OFRA COSMETICS</Depottext>
+<Packungsinhalt>  1,2 G</Packungsinhalt>
+<Linie>6402001</Linie>
+<Depot>6402000</Depot>
+<UVP>11.50</UVP>
+<Eanliste Anzahl="1">
+<EAN>693102440036</EAN>
+</Eanliste>
+<Loeschkennzeichen>NEW</Loeschkennzeichen>
+</Artikel>
+</Artikelstamm>

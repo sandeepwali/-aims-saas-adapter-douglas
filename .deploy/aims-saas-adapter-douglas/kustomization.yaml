@@ -1,0 +1,32 @@
+commonLabels:
+  app.solumesl.com/customer: douglas
+  app.kubernetes.io/component: middleware
+  app.kubernetes.io/name: aims-client-douglas
+
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - service-ssh.yaml
+  - istio.yaml
+  - ingress.yaml
+
+images:
+  - name: aims-client-douglas-image
+    newName: harbor.solumesl.com/aims-saas/aims-saas-adapter-douglas
+    newTag: "0.0.6-SNAPSHOT"
+
+configMapGenerator:
+  - name: aims-client-douglas-env
+    literals:
+      - server.port="8080"
+      - server.servlet.context-path="/douglas/client"
+      - management.server.port="9090"
+secretGenerator:
+  - name: aims-client-douglas-env
+    literals:
+      - solum.saas.server.username=saas-client-common@svc.solumesl.com
+      - solum.saas.server.password=PaOm7WH4UhV1oQmBbQFnuQ==
+      - spring.datasource.url=jdbc:postgresql://aims-db-postgresql:5432/AIMS_SAAS_DOUGLAS
+      - spring.datasource.username=aims
+      - spring.datasource.password=aims
